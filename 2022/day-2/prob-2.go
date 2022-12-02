@@ -33,7 +33,6 @@ func getRounds(lines []string) []Round {
 func scoreRound(round Round) int {
 	score := 0
 	switch round.me {
-	// Lose
 	case "X":
 		switch round.you {
 		case "A":
@@ -43,7 +42,6 @@ func scoreRound(round Round) int {
 		case "C":
 			score += 2
 		}
-	// Draw
 	case "Y":
 		score += 3
 		switch round.you {
@@ -54,7 +52,6 @@ func scoreRound(round Round) int {
 		case "C":
 			score += 3
 		}
-		// Win
 	case "Z":
 		score += 6
 		switch round.you {
