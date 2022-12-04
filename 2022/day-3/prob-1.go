@@ -22,10 +22,8 @@ func splitAllLines(lines []string) [][2]string {
 
 func getCommonChar(a string, b string) (rune, error) {
 	for _, charA := range a {
-		for _, charB := range b {
-			if charA == charB {
-				return charA, nil
-			}
+		if strings.Contains(b, string(charA)) {
+			return charA, nil
 		}
 	}
 	return -1, errors.New("Unable to find matching rune")
