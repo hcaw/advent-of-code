@@ -28,9 +28,7 @@ func getPairs(lines []string) []Pair {
 	var pairs []Pair
 	for _, line := range lines {
 		splitLine := strings.SplitN(line, ",", 2)
-		a := getSection(splitLine[0])
-		b := getSection(splitLine[1])
-		pair := Pair{a, b}
+		pair := Pair{getSection(splitLine[0]), getSection(splitLine[1])}
 		pairs = append(pairs, pair)
 	}
 	return pairs
