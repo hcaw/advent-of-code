@@ -17,13 +17,9 @@ func splitIntoGroups(lines []string) [][3]string {
 }
 
 func getCommonChar(group [3]string) (rune, error) {
-	for _, charA := range group[0] {
-		for _, charB := range group[1] {
-			for _, charC := range group[2] {
-				if charA == charB && charB == charC {
-					return charA, nil
-				}
-			}
+	for _, char := range group[0] {
+		if strings.ContainsRune(group[1], char) && strings.ContainsRune(group[2], char) {
+			return char, nil
 		}
 	}
 	return -1, errors.New("Unable to find matching run")

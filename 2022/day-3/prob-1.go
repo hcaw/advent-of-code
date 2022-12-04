@@ -22,7 +22,7 @@ func splitAllLines(lines []string) [][2]string {
 
 func getCommonChar(a string, b string) (rune, error) {
 	for _, charA := range a {
-		if strings.Contains(b, string(charA)) {
+		if strings.ContainsRune(b, charA) {
 			return charA, nil
 		}
 	}
