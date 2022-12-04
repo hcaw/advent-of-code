@@ -7,28 +7,26 @@ import (
 	"strings"
 )
 
-func splitAllLines(lines []string) [][2]string {
-	var newLines [][2]string
-	for _, line := range lines {
-		length := len(line)
-		half := length / 2
-		a := line[:half]
-		b := line[half:]
-		newLine := [2]string{a, b}
-		newLines = append(newLines, newLine)
+func splitIntoGroups(lines []string) [][3]string {
+	var newLines [][3]string
+	for i := 0; i < len(lines); i += 3 {
+		group := [3]string{lines[i], lines[i+1], lines[i+2]}
+		newLines = append(newLines, group)
 	}
 	return newLines
 }
 
-func getCommonChar(a string, b string) (rune, error) {
-	for _, charA := range a {
-		for _, charB := range b {
-			if charA == charB {
-				return charA, nil
+func getCommonChar(group [3]string) (rune, error) {
+	for _, charA := range group[0] {
+		for _, charB := range group[1] {
+			for _, charC := range group[2] {
+				if charA == charB && charB == charC {
+					return charA, nil
+				}
 			}
 		}
 	}
-	return -1, errors.New("Unable to find matching rune")
+	return -1, errors.New("Unable to find matching run")
 }
 
 func getPriority(item rune) (int, error) {
@@ -48,10 +46,10 @@ func main() {
 	input, _ := os.ReadFile("./input.txt")
 	lines := strings.Split(string(input), "\n")
 
-	splitLines := splitAllLines(lines)
+	groups := splitIntoGroups(lines)
 	totalPriorities := 0
-	for _, splitLine := range splitLines {
-		commonChar, _ := getCommonChar(splitLine[0], splitLine[1])
+	for _, group := range groups {
+		commonChar, _ := getCommonChar(group)
 		priority, _ := getPriority(commonChar)
 		totalPriorities += priority
 	}
