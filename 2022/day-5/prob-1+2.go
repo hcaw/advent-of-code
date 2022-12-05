@@ -65,7 +65,7 @@ func copy2DSlice[T any](slice [][]T) [][]T {
 	return newSlice
 }
 
-func processInstructions(stacks [][]rune, instr []Instruction) [][]rune {
+func processInstructions9k(stacks [][]rune, instr []Instruction) [][]rune {
 	newStacks := copy2DSlice(stacks)
 	for _, instruction := range instr {
 		from := newStacks[instruction.from-1]
@@ -82,14 +82,37 @@ func processInstructions(stacks [][]rune, instr []Instruction) [][]rune {
 	return newStacks
 }
 
+func processInstructions9k1(stacks [][]rune, instr []Instruction) [][]rune {
+	newStacks := copy2DSlice(stacks)
+	for _, instruction := range instr {
+		from := newStacks[instruction.from-1]
+		to := newStacks[instruction.to-1]
+
+		chars := from[len(from)-instruction.quantity:]
+		from = from[:len(from)-instruction.quantity]
+		to = append(to, chars...)
+
+		newStacks[instruction.from-1] = from
+		newStacks[instruction.to-1] = to
+	}
+
+	return newStacks
+}
+
 func main() {
 	input, _ := os.ReadFile("./input.txt")
 	sections := strings.Split(string(input), "\n\n")
 
 	stacks := initStacks(sections[0])
 	instructions := getInstructions(sections[1])
-	newStacks := processInstructions(stacks, instructions)
-	for _, stack := range newStacks {
-		fmt.Print(string(stack[len(stack) - 1]))
+	newStacks9k := processInstructions9k(stacks, instructions)
+	for _, stack := range newStacks9k {
+		fmt.Print(string(stack[len(stack)-1]))
 	}
+	fmt.Println()
+	newStacks9k1 := processInstructions9k1(stacks, instructions)
+	for _, stack := range newStacks9k1 {
+		fmt.Print(string(stack[len(stack)-1]))
+	}
+	fmt.Println()
 }
