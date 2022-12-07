@@ -22,6 +22,14 @@ func main() {
 		calsPerElf = append(calsPerElf, total)
 	}
 
+	bigBoi := 0
+	for _, cals := range calsPerElf {
+		if cals > bigBoi {
+			bigBoi = cals
+		}
+	}
+	fmt.Println("Solution to problem 1:", bigBoi)
+
 	sort.Slice(calsPerElf, func(i, j int) bool {
 		return calsPerElf[i] > calsPerElf[j]
 	})
@@ -30,5 +38,5 @@ func main() {
 	for _, cals := range bigBois {
 		totalCals += cals
 	}
-	fmt.Println(totalCals)
+	fmt.Println("Solution to problem 2:", totalCals)
 }
