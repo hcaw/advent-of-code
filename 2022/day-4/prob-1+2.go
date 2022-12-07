@@ -34,6 +34,11 @@ func getPairs(lines []string) []Pair {
 	return pairs
 }
 
+func isContained(pair Pair) bool {
+	return (pair.a.start >= pair.b.start && pair.a.end <= pair.b.end) ||
+		(pair.b.start >= pair.a.start && pair.b.end <= pair.a.end)
+}
+
 func overlaps(pair Pair) bool {
 	return (pair.a.start >= pair.b.start && pair.a.start <= pair.b.end) ||
 		(pair.b.start >= pair.a.start && pair.b.start <= pair.a.end)
@@ -44,11 +49,16 @@ func main() {
 	lines := strings.Split(string(input), "\n")
 
 	pairs := getPairs(lines)
-	total := 0
+	totalContained := 0
+	totalOverlapping := 0
 	for _, pair := range pairs {
+		if isContained(pair) {
+			totalOverlapping += 1
+		}
 		if overlaps(pair) {
-			total += 1
+			totalContained += 1
 		}
 	}
-	fmt.Println(total)
+	fmt.Println("Solution to problem 1:",totalOverlapping)
+	fmt.Println("Solution to problem 2:",totalContained)
 }
