@@ -32,7 +32,6 @@ func isDirectoryListing(str string) bool {
 	return strings.HasPrefix(str, "dir")
 }
 
-// not my proudest moment...
 func createFileTree(lines []string) *node {
 	root := &node{name: "/"}
 	root.parent = root
