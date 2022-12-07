@@ -37,8 +37,7 @@ func createFileTree(lines []string) *node {
 	root := &node{name: "/"}
 	root.parent = root
 	curr := root
-	i := 1
-	for i < len(lines)-1 {
+	for i := 1; i < len(lines)-1; i++ {
 		line := lines[i]
 		if isListCommand(line) {
 			for i < len(lines)-1 {
@@ -73,7 +72,6 @@ func createFileTree(lines []string) *node {
 				curr = newNode
 			}
 		}
-		i += 1
 	}
 	return root
 }
