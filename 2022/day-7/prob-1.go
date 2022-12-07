@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -15,53 +16,61 @@ type node struct {
 	totalSize *int
 }
 
+func isListCommand(str string) bool {
+	return str == "$ ls"
+}
+
+func isCdCommand(str string) bool {
+	return strings.HasPrefix(str, "$ cd")
+}
+
+func containsPrompt(str string) bool {
+	return strings.HasPrefix(str, "$")
+}
+
+func isDirectoryListing(str string) bool {
+	return strings.HasPrefix(str, "dir")
+}
+
 // not my proudest moment...
 func createFileTree(lines []string) *node {
 	root := &node{name: "/"}
 	root.parent = root
-	var curr *node = root
+	curr := root
 	i := 1
 	for i < len(lines)-1 {
 		line := lines[i]
-		if strings.Contains(line, "$ ls") {
-			fmt.Println("Found ls on line", i+1)
+		if isListCommand(line) {
 			for i < len(lines)-1 {
 				i += 1
 				line := lines[i]
-				if strings.Contains(line, "$") {
-					fmt.Println("Found $ on line", i+1)
+				if containsPrompt(line) {
 					i -= 1
 					break
 				}
 				var newNode *node
 				name := strings.Fields(line)[1]
-				if strings.Contains(line, "dir") {
-					fmt.Println("Found dir on line", i+1)
+				if isDirectoryListing(line) {
 					newNode = &node{name: name, parent: curr}
 				} else {
-					fmt.Println("Found file on line", i+1)
 					size, _ := strconv.Atoi(strings.Fields(line)[0])
 					newNode = &node{name: name, size: size}
 				}
 				curr.children = append(curr.children, newNode)
 			}
-		} else if strings.Contains(line, "$ cd") {
+		} else if isCdCommand(line) {
 			destination := strings.Fields(line)[2]
-			fmt.Println("Found cd on line", i+1, ", destination is", destination)
 			if destination == ".." {
 				curr = curr.parent
 			} else {
 				var newNode *node
 				for _, n := range curr.children {
 					if n.name == destination {
-						fmt.Println("Found matching destination of", n.name)
 						newNode = n
 						break
 					}
 				}
 				curr = newNode
-				fmt.Println("New dir is now", curr.name)
-				fmt.Println("New parent is now", curr.parent.name)
 			}
 		}
 		i += 1
@@ -89,10 +98,24 @@ func getDirsBelowSize(n *node, size int) int {
 			total += getDirsBelowSize(child, size)
 		}
 	}
-	if n.totalSize != nil && *n.totalSize <= size{
+	if n.totalSize != nil && *n.totalSize <= size {
 		total += *n.totalSize
 	}
 	return total
+}
+
+func getAllDirSizes(n *node) []int {
+	var sizes []int
+	for _, child := range n.children {
+		if child.parent != nil {
+			childSizes := getAllDirSizes(child)
+			sizes = append(sizes, childSizes...)
+		}
+	}
+	if n.totalSize != nil {
+		sizes = append(sizes, *n.totalSize)
+	}
+	return sizes
 }
 
 func main() {
@@ -102,5 +125,21 @@ func main() {
 	tree := createFileTree(lines)
 	calcSizes(tree)
 	total := getDirsBelowSize(tree, 100000)
-	fmt.Println(total)
+	fmt.Println("Problem 1 answer:", total)
+
+	const requiredAvailable = 30000000
+	const diskSpace = 70000000
+	diskUsed := *tree.totalSize
+	diskAvailable := diskSpace - diskUsed
+	sizeToDelete := requiredAvailable - diskAvailable
+
+	dirSizes := getAllDirSizes(tree)
+	sort.Ints(dirSizes)
+
+	for _, size := range dirSizes {
+		if size >= sizeToDelete {
+			fmt.Println("Problem 2 answer:", size)
+			return
+		}
+	}
 }
