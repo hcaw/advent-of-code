@@ -32,6 +32,42 @@ func isDirectoryListing(str string) bool {
 	return strings.HasPrefix(str, "dir")
 }
 
+func processListCommand(i *int, lines []string, curr *node) {
+	for *i < len(lines)-1 {
+		*i += 1
+		line := lines[*i]
+		if containsPrompt(line) {
+			*i -= 1
+			return
+		}
+		var newNode *node
+		name := strings.Fields(line)[1]
+		if isDirectoryListing(line) {
+			newNode = &node{name: name, parent: curr}
+		} else {
+			size, _ := strconv.Atoi(strings.Fields(line)[0])
+			newNode = &node{name: name, size: size}
+		}
+		curr.children = append(curr.children, newNode)
+	}
+}
+
+func processCdCommand(line string, curr *node) *node {
+	destination := strings.Fields(line)[2]
+	if destination == ".." {
+		return curr.parent
+	} else {
+		var newNode *node
+		for _, n := range curr.children {
+			if n.name == destination {
+				newNode = n
+				break
+			}
+		}
+		return newNode
+	}
+}
+
 func createFileTree(lines []string) *node {
 	root := &node{name: "/"}
 	root.parent = root
@@ -39,37 +75,9 @@ func createFileTree(lines []string) *node {
 	for i := 1; i < len(lines)-1; i++ {
 		line := lines[i]
 		if isListCommand(line) {
-			for i < len(lines)-1 {
-				i += 1
-				line := lines[i]
-				if containsPrompt(line) {
-					i -= 1
-					break
-				}
-				var newNode *node
-				name := strings.Fields(line)[1]
-				if isDirectoryListing(line) {
-					newNode = &node{name: name, parent: curr}
-				} else {
-					size, _ := strconv.Atoi(strings.Fields(line)[0])
-					newNode = &node{name: name, size: size}
-				}
-				curr.children = append(curr.children, newNode)
-			}
+			processListCommand(&i, lines, curr)
 		} else if isCdCommand(line) {
-			destination := strings.Fields(line)[2]
-			if destination == ".." {
-				curr = curr.parent
-			} else {
-				var newNode *node
-				for _, n := range curr.children {
-					if n.name == destination {
-						newNode = n
-						break
-					}
-				}
-				curr = newNode
-			}
+			curr = processCdCommand(line, curr)
 		}
 	}
 	return root
