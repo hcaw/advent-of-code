@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -25,37 +24,33 @@ func findTotalVisible(grid [][]int) int {
 	visible := len(grid) * 2
 	// Length of remaining top and bottom
 	visible += (len(grid[0]) - 2) * 2
-	for i := 1; i < len(grid)-1; i++ {
-		for j := 1; j < len(grid[0])-1; j++ {
-			num := grid[i][j]
+	for r := 1; r < len(grid)-1; r++ {
+		for c := 1; c < len(grid[0])-1; c++ {
+			num := grid[r][c]
 			upVisible := true
-			for k := i - 1; k >= 0; k-- {
-				height := grid[k][j]
-				if num <= height {
+			for k := r - 1; k >= 0; k-- {
+				if num <= grid[k][c] {
 					upVisible = false
 					break
 				}
 			}
 			leftVisible := true
-			for k := j - 1; k >= 0; k-- {
-				height := grid[i][k]
-				if num <= height {
+			for k := c - 1; k >= 0; k-- {
+				if num <= grid[r][k] {
 					leftVisible = false
 					break
 				}
 			}
 			downVisible := true
-			for k := i + 1; k < len(grid); k++ {
-				height := grid[k][j]
-				if num <= height {
+			for k := r + 1; k < len(grid); k++ {
+				if num <= grid[k][c] {
 					downVisible = false
 					break
 				}
 			}
 			rightVisible := true
-			for k := j + 1; k < len(grid[0]); k++ {
-				height := grid[i][k]
-				if num <= height {
+			for k := c + 1; k < len(grid[0]); k++ {
+				if num <= grid[r][k] {
 					rightVisible = false
 					break
 				}
@@ -69,48 +64,42 @@ func findTotalVisible(grid [][]int) int {
 }
 
 func findHighestScenicScore(grid [][]int) int {
-	var scores []int
-	for i := 0; i < len(grid); i++ {
-		for j := 0; j < len(grid[0]); j++ {
-			num := grid[i][j]
-			upScore := 0
-			for k := i - 1; k >= 0; k-- {
-				height := grid[k][j]
+	var highest int
+	for r := 0; r < len(grid); r++ {
+		for c := 0; c < len(grid[0]); c++ {
+			num := grid[r][c]
+			var upScore, leftScore, downScore, rightScore int
+			for i := r - 1; i >= 0; i-- {
 				upScore += 1
-				if num <= height {
+				if num <= grid[i][c] {
 					break
 				}
 			}
-			leftScore := 0
-			for k := j - 1; k >= 0; k-- {
-				height := grid[i][k]
+			for i := c - 1; i >= 0; i-- {
 				leftScore += 1
-				if num <= height {
+				if num <= grid[r][i] {
 					break
 				}
 			}
-			downScore := 0
-			for k := i + 1; k < len(grid); k++ {
-				height := grid[k][j]
+			for i := r + 1; i < len(grid); i++ {
 				downScore += 1
-				if num <= height {
+				if num <= grid[i][c] {
 					break
 				}
 			}
-			rightScore := 0
-			for k := j + 1; k < len(grid[0]); k++ {
-				height := grid[i][k]
+			for i := c + 1; i < len(grid[0]); i++ {
 				rightScore += 1
-				if num <= height {
+				if num <= grid[r][i] {
 					break
 				}
 			}
 			totalScore := upScore * leftScore * downScore * rightScore
-			scores = append(scores, totalScore)
+			if (totalScore > highest) {
+				highest = totalScore
+			}
 		}
 	}
-	sort.Ints(scores)
-	return scores[len(scores) - 1]
+	return highest
 }
 
 func main() {
