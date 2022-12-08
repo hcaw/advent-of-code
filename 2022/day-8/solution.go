@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -67,10 +68,57 @@ func findTotalVisible(grid [][]int) int {
 	return visible
 }
 
+func findHighestScenicScore(grid [][]int) int {
+	var scores []int
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			num := grid[i][j]
+			upScore := 0
+			for k := i - 1; k >= 0; k-- {
+				height := grid[k][j]
+				upScore += 1
+				if num <= height {
+					break
+				}
+			}
+			leftScore := 0
+			for k := j - 1; k >= 0; k-- {
+				height := grid[i][k]
+				leftScore += 1
+				if num <= height {
+					break
+				}
+			}
+			downScore := 0
+			for k := i + 1; k < len(grid); k++ {
+				height := grid[k][j]
+				downScore += 1
+				if num <= height {
+					break
+				}
+			}
+			rightScore := 0
+			for k := j + 1; k < len(grid[0]); k++ {
+				height := grid[i][k]
+				rightScore += 1
+				if num <= height {
+					break
+				}
+			}
+			totalScore := upScore * leftScore * downScore * rightScore
+			scores = append(scores, totalScore)
+		}
+	}
+	sort.Ints(scores)
+	return scores[len(scores) - 1]
+}
+
 func main() {
 	input, _ := os.ReadFile("./input.txt")
 	lines := strings.Split(string(input), "\n")
 	grid := createGrid(lines)
 	visible := findTotalVisible(grid)
-	fmt.Println(visible)
+	fmt.Println("Solution to problem 1", visible)
+	highest := findHighestScenicScore(grid)
+	fmt.Println("Solution to problem 2", highest)
 }
