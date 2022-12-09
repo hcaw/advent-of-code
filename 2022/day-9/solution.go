@@ -19,6 +19,16 @@ func abs(n int) int {
 	return n
 }
 
+func sign(input int) int {
+	if input > 0 {
+		return 1
+	}
+	if input < 0 {
+		return -1
+	}
+	return 0
+}
+
 func calcVisitedPositions(lines []string, length int) int {
 	knots := make([]Coords, length)
 	visited := make(map[Coords]struct{})
@@ -33,21 +43,8 @@ func calcVisitedPositions(lines []string, length int) int {
 				h, t := knots[j-1], &knots[j]
 				diff := Coords{h.x - t.x, h.y - t.y}
 				if abs(diff.x) == 2 || abs(diff.y) == 2 {
-					if diff.x == 0 || diff.y == 0 {
-						t.x = t.x + (diff.x / 2)
-						t.y = t.y + (diff.y / 2)
-					} else {
-						if diff.x > 0 {
-							t.x = t.x + 1
-						} else {
-							t.x = t.x - 1
-						}
-						if diff.y > 0 {
-							t.y = t.y + 1
-						} else {
-							t.y = t.y - 1
-						}
-					}
+					t.x += sign(diff.x)
+					t.y += sign(diff.y)
 				} else {
 					break
 				}
