@@ -30,7 +30,7 @@ func calcVisitedPositions(lines []string, length int) int {
 			knots[0].x = knots[0].x + transforms[direction].x
 			knots[0].y = knots[0].y + transforms[direction].y
 			for j := 1; j < length; j++ {
-				h, t := &knots[j-1], &knots[j]
+				h, t := knots[j-1], &knots[j]
 				diff := Coords{h.x - t.x, h.y - t.y}
 				if abs(diff.x) == 2 || abs(diff.y) == 2 {
 					if diff.x == 0 || diff.y == 0 {
