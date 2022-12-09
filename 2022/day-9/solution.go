@@ -32,7 +32,6 @@ func sign(input int) int {
 func calcVisitedPositions(lines []string, length int) int {
 	knots := make([]Coords, length)
 	visited := make(map[Coords]struct{})
-	visited[Coords{}] = struct{}{}
 	for _, line := range lines {
 		direction := strings.Fields(line)[0]
 		steps, _ := strconv.Atoi(strings.Fields(line)[1])
