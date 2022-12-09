@@ -27,28 +27,30 @@ func findTotalVisible(grid [][]int) int {
 	for r := 1; r < len(grid)-1; r++ {
 		for c := 1; c < len(grid[0])-1; c++ {
 			num := grid[r][c]
-			upVisible := true
+			var (
+				upVisible    = true
+				leftVisible  = true
+				downVisible  = true
+				rightVisible = true
+			)
 			for k := r - 1; k >= 0; k-- {
 				if num <= grid[k][c] {
 					upVisible = false
 					break
 				}
 			}
-			leftVisible := true
 			for k := c - 1; k >= 0; k-- {
 				if num <= grid[r][k] {
 					leftVisible = false
 					break
 				}
 			}
-			downVisible := true
 			for k := r + 1; k < len(grid); k++ {
 				if num <= grid[k][c] {
 					downVisible = false
 					break
 				}
 			}
-			rightVisible := true
 			for k := c + 1; k < len(grid[0]); k++ {
 				if num <= grid[r][k] {
 					rightVisible = false
@@ -94,7 +96,7 @@ func findHighestScenicScore(grid [][]int) int {
 				}
 			}
 			totalScore := upScore * leftScore * downScore * rightScore
-			if (totalScore > highest) {
+			if totalScore > highest {
 				highest = totalScore
 			}
 		}
