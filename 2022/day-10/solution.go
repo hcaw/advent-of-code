@@ -7,36 +7,34 @@ import (
 	"strings"
 )
 
-func calcSigs(cycle int, cycleToCheck int, x int, sigs *[]int) int {
-	addToCycle := 0
-	if cycle == cycleToCheck {
-		addToCycle = 40
-		*sigs = append(*sigs, cycle*x)
-	}
-	return addToCycle
-}
-
 func main() {
 	input, _ := os.ReadFile("./input.txt")
 	lines := strings.Split(string(input), "\n")
 
-	cycleToCheck := 20
-	var sigs []int
-	cycle, x := 0, 1
-	for _, line := range lines {
-		instr := strings.Fields(line)[0]
-		switch instr {
-		case "noop":
-			cycle += 1
-			cycleToCheck += calcSigs(cycle, cycleToCheck, x, &sigs)
-		case "addx":
-			n, _ := strconv.Atoi(strings.Fields(line)[1])
-			cycle += 1
-			cycleToCheck += calcSigs(cycle, cycleToCheck, x, &sigs)
-			cycle += 1
-			cycleToCheck += calcSigs(cycle, cycleToCheck, x, &sigs)
-			x += n
+	cycle, i, check, x, processing := 1, 0, 20, 1, false
+	sigs := make([]int, 0)
+	for i < len(lines) {
+		// START OF CYCLE
+		if cycle == check {
+			check += 40
+			sigs = append(sigs, cycle*x)
 		}
+		line := lines[i]
+		if processing {
+			processing = false
+			// END OF CYCLE
+			i += 1
+			amountToAdd, _ := strconv.Atoi(strings.Fields(line)[1])
+			x += amountToAdd
+			} else {
+				instr := strings.Fields(line)[0]
+				if instr == "addx" {
+					processing = true
+				} else {
+					i += 1
+				}
+		}
+		cycle += 1
 	}
 	sum := 0
 	for _, sig := range sigs {
