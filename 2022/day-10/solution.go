@@ -23,15 +23,10 @@ func main() {
 			check += 40
 			sigs = append(sigs, cycle*x)
 		}
-		// The middle of the sprite is x
-		// The location of the pixel is the cycle
-		// Translate cycle position into horizontal position
-
-		pixelHorizontal := (cycle % 40) - 1 // 0 - 39
+		pixelHorizontal := (cycle % 40) - 1
 		if pixelHorizontal == -1 {
 			pixelHorizontal = 39
 		}
-		// Check here if the location of the current pixel matches one of the locations of the sprite
 		if pixelHorizontal == x || pixelHorizontal == x-1 || pixelHorizontal == x+1 {
 			pixels[cycle-1] = "#"
 		}
