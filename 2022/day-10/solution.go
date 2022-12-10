@@ -11,9 +11,9 @@ func main() {
 	input, _ := os.ReadFile("./input.txt")
 	lines := strings.Split(string(input), "\n")
 
-	cycle, i, check, x, processing := 1, 0, 20, 1, false
+	check, x, processing := 20, 1, false
 	sigs := make([]int, 0)
-	for i < len(lines) {
+	for i, cycle := 0, 1; i < len(lines); cycle++ {
 		// START OF CYCLE
 		if cycle == check {
 			check += 40
@@ -26,15 +26,13 @@ func main() {
 			i += 1
 			amountToAdd, _ := strconv.Atoi(strings.Fields(line)[1])
 			x += amountToAdd
+		} else {
+			if instr := strings.Fields(line)[0]; instr == "addx" {
+				processing = true
 			} else {
-				instr := strings.Fields(line)[0]
-				if instr == "addx" {
-					processing = true
-				} else {
-					i += 1
-				}
+				i += 1
+			}
 		}
-		cycle += 1
 	}
 	sum := 0
 	for _, sig := range sigs {
