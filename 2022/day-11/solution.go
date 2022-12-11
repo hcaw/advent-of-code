@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -10,7 +11,7 @@ import (
 type Monkey struct {
 	items   []int
 	opArith string
-	operand   string
+	operand string
 	testDiv int
 	testT   int
 	testF   int
@@ -42,10 +43,37 @@ func main() {
 		monkey.testF = testF
 		monkeys[i] = monkey
 	}
-	fmt.Println(monkeys)
 
-	// loop 20 rounds
+	inspections := make([]int, len(monkeys))
 	for i := 0; i < 20; i++ {
-
+		for j, monkey := range monkeys {
+			for _, item := range monkey.items {
+				inspections[j] += 1
+				num, err := strconv.Atoi(monkey.operand)
+				if monkey.opArith == "+" {
+					if err != nil {
+						item += item
+					} else {
+						item += num
+					}
+				} else {
+					if err != nil {
+						item *= item
+					} else {
+						item *= num
+					}
+				}
+				item = int(item / 3)
+				if item%monkey.testDiv == 0 {
+					monkeys[monkey.testT].items = append(monkeys[monkey.testT].items, item)
+				} else {
+					monkeys[monkey.testF].items = append(monkeys[monkey.testF].items, item)
+				}
+			}
+			monkeys[j].items = []int{}
+		}
 	}
+	sort.Ints(inspections)
+	monkeyBiz := inspections[len(inspections)-2] * inspections[len(inspections)-1]
+	fmt.Println("Solution to problem 1 is", monkeyBiz)
 }
