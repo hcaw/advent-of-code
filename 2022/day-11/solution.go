@@ -17,10 +17,7 @@ type Monkey struct {
 	testF   int
 }
 
-func main() {
-	input, _ := os.ReadFile("./input.txt")
-	monkeyGroups := strings.Split(string(input), "\n\n")
-
+func initMonkeys(monkeyGroups []string) []Monkey {
 	monkeys := make([]Monkey, len(monkeyGroups))
 	for i, monkey := range monkeyGroups {
 		lines := strings.Split(string(monkey), "\n")
@@ -43,14 +40,20 @@ func main() {
 		monkey.testF = testF
 		monkeys[i] = monkey
 	}
+	return monkeys
+}
 
+func calcMonkeyBiz(monkeys []Monkey, divide bool, rounds int) int {
+	modulo := 1
+	for _, m := range monkeys {
+		modulo *= m.testDiv
+	}
 	inspections := make([]int, len(monkeys))
-	for i := 0; i < 20; i++ {
+	for i := 0; i < rounds; i++ {
 		for j, monkey := range monkeys {
 			for _, item := range monkey.items {
 				inspections[j] += 1
-				num, err := strconv.Atoi(monkey.operand)
-				if monkey.opArith == "+" {
+				if num, err := strconv.Atoi(monkey.operand); monkey.opArith == "+" {
 					if err != nil {
 						item += item
 					} else {
@@ -63,7 +66,11 @@ func main() {
 						item *= num
 					}
 				}
-				item = int(item / 3)
+				if divide {
+					item = int(item / 3)
+				} else {
+					item = item % modulo
+				}
 				if item%monkey.testDiv == 0 {
 					monkeys[monkey.testT].items = append(monkeys[monkey.testT].items, item)
 				} else {
@@ -75,5 +82,15 @@ func main() {
 	}
 	sort.Ints(inspections)
 	monkeyBiz := inspections[len(inspections)-2] * inspections[len(inspections)-1]
-	fmt.Println("Solution to problem 1 is", monkeyBiz)
+	return monkeyBiz
+}
+
+func main() {
+	input, _ := os.ReadFile("./input.txt")
+	monkeyGroups := strings.Split(string(input), "\n\n")
+
+	monkeys := initMonkeys(monkeyGroups)
+	fmt.Println("Solution to problem 1 is", calcMonkeyBiz(monkeys, true, 20))
+	monkeys = initMonkeys(monkeyGroups)
+	fmt.Println("Solution to problem 2 is", calcMonkeyBiz(monkeys, false, 10000))
 }
