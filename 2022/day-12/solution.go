@@ -52,6 +52,9 @@ func breadthFirst(grid [][]rune, start, end Pos) int {
 	for len(frontier) != 0 {
 		curr := frontier[0]
 		frontier = frontier[1:]
+		if curr == end {
+			break
+		}
 		for _, transform := range transforms {
 			next := Pos{curr.i + transform.i, curr.j + transform.j}
 			_, beenVisited := cameFrom[next]
