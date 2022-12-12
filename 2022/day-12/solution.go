@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"strings"
 )
@@ -89,7 +88,7 @@ func main() {
 	length := breadthFirst(grid, start, end)
 	fmt.Println("Solution to problem 1 is", length)
 
-	shortest := math.MaxInt
+	shortest := length
 	for _, a := range aPos {
 		length := breadthFirst(grid, a, end)
 		if length != -1 && length < shortest {
