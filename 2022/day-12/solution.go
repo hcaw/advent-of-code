@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -43,7 +44,7 @@ func canBeVisited(curr, next Pos, grid [][]rune) bool {
 	return grid[curr.i][curr.j]+1 >= grid[next.i][next.j]
 }
 
-func breadthFirst(grid [][]rune, start, end Pos) int {
+func breadthFirst(grid [][]rune, start, end Pos) (int, error) {
 	frontier := []Pos{}
 	frontier = append(frontier, start)
 	cameFrom := make(map[Pos]*Pos)
@@ -70,7 +71,7 @@ func breadthFirst(grid [][]rune, start, end Pos) int {
 		}
 	}
 	if !endFound {
-		return -1
+		return -1, errors.New("no solution possible")
 	}
 	curr := end
 	path := []Pos{}
@@ -78,7 +79,7 @@ func breadthFirst(grid [][]rune, start, end Pos) int {
 		path = append(path, curr)
 		curr = *cameFrom[curr]
 	}
-	return len(path)
+	return len(path), nil
 }
 
 var transforms = []Pos{{-1, 0}, {1, 0}, {0, 1}, {0, -1}}
@@ -88,13 +89,13 @@ func main() {
 	lines := strings.Split(string(input), "\n")
 	grid, start, end, aPos := createGrid(lines)
 
-	length := breadthFirst(grid, start, end)
+	length, _ := breadthFirst(grid, start, end)
 	fmt.Println("Solution to problem 1 is", length)
 
 	shortest := length
 	for _, a := range aPos {
-		length := breadthFirst(grid, a, end)
-		if length != -1 && length < shortest {
+		length, err := breadthFirst(grid, a, end)
+		if err == nil && length < shortest {
 			shortest = length
 		}
 	}
